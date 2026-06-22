@@ -21,6 +21,7 @@ provider:
           Action:
             - dynamodb:PutItem
             - dynamodb:Scan
+            - dynamodb:Query
           Resource:
             - !GetAtt PriceHistoryTable.Arn
 
@@ -58,8 +59,12 @@ resources:
         TableName: ${self:service}-${sls:stage}-price-history
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: email
+            AttributeType: S
+          - AttributeName: createdAt
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: email
             KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE

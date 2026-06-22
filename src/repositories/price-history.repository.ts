@@ -1,7 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
-import { ScanCommand } from '@aws-sdk/lib-dynamodb';
-import { randomUUID } from 'crypto';
+import { DynamoDBDocumentClient, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -15,18 +13,25 @@ export type SavePriceHistoryInput = {
   email: string;
 };
 
-export async function savePriceHistory(input: SavePriceHistoryInput) {
+export type PriceHistoryItem = {
+  email: string;
+  createdAt: string;
+  coin: string;
+  price: number;
+  currency: string;
+};
+
+export async function savePriceHistory(input: SavePriceHistoryInput): Promise<PriceHistoryItem> {
   if (!tableName) {
     throw new Error('PRICE_HISTORY_TABLE is not configured');
   }
 
-  const item = {
-    id: randomUUID(),
+  const item: PriceHistoryItem = {
+    email: input.email,
+    createdAt: new Date().toISOString(),
     coin: input.coin,
     price: input.price,
-    currency: input.currency,
-    email: input.email,
-    createdAt: new Date().toISOString()
+    currency: input.currency
   };
 
   await docClient.send(
@@ -39,7 +44,7 @@ export async function savePriceHistory(input: SavePriceHistoryInput) {
   return item;
 }
 
-export async function getPriceHistory() {
+export async function getPriceHistory(): Promise<PriceHistoryItem[]> {
   if (!tableName) {
     throw new Error('PRICE_HISTORY_TABLE is not configured');
   }
@@ -50,5 +55,5 @@ export async function getPriceHistory() {
     })
   );
 
-  return result.Items ?? [];
+  return (result.Items ?? []) as PriceHistoryItem[];
 }

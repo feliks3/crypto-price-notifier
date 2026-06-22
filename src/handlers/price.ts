@@ -20,23 +20,17 @@ const jsonResponse = (statusCode: number, body: unknown) => {
 export const handler = async (event: { body?: string | null }) => {
   try {
     if (!event.body) {
-      return jsonResponse(400, {
-        message: 'Request body is required'
-      });
+      return jsonResponse(400, { message: 'Request body is required' });
     }
 
     const body = JSON.parse(event.body) as PriceRequestBody;
 
     if (!body.coin) {
-      return jsonResponse(400, {
-        message: 'coin is required'
-      });
+      return jsonResponse(400, { message: 'coin is required' });
     }
 
     if (!body.email) {
-      return jsonResponse(400, {
-        message: 'email is required'
-      });
+      return jsonResponse(400, { message: 'email is required' });
     }
 
     const result = await getCoinPrice(body.coin);
@@ -48,7 +42,7 @@ export const handler = async (event: { body?: string | null }) => {
       price: result.price
     });
 
-    const history = await savePriceHistory({
+    await savePriceHistory({
       coin: result.coin,
       price: result.price,
       currency: result.currency,
@@ -61,14 +55,10 @@ export const handler = async (event: { body?: string | null }) => {
       price: result.price,
       email: body.email,
       emailSent: true,
-      historyId: history.id,
       lastUpdatedAt: result.lastUpdatedAt
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unexpected error';
-
-    return jsonResponse(500, {
-      message
-    });
+    return jsonResponse(500, { message });
   }
 };

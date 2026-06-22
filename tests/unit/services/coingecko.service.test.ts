@@ -4,6 +4,15 @@ import { CoinNotFoundError, ExternalAPIError } from '../../../src/utils/errors';
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
+jest.mock('../../../src/config', () => ({
+  config: {
+    coingecko: {
+      baseUrl: 'https://api.coingecko.com/api/v3',
+      currency: 'usd'
+    }
+  }
+}));
+
 describe('getCoinPrice', () => {
   beforeEach(() => {
     mockFetch.mockReset();

@@ -1,4 +1,7 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { config } from '../config';
+
+const sesClient = new SESClient({ region: config.ses.region });
 
 interface SendPriceEmailParams {
   toEmail: string;
@@ -13,17 +16,12 @@ export const sendPriceEmail = async ({
   currency,
   price
 }: SendPriceEmailParams): Promise<void> => {
-  const fromEmail = process.env.SES_FROM_EMAIL;
-  if (!fromEmail) {
+  if (!config.ses.fromEmail) {
     throw new Error('SES_FROM_EMAIL environment variable is not configured');
   }
 
-  const sesClient = new SESClient({
-    region: process.env.AWS_REGION || 'ap-southeast-2'
-  });
-
   const command = new SendEmailCommand({
-    Source: fromEmail,
+    Source: config.ses.fromEmail,
     Destination: {
       ToAddresses: [toEmail]
     },

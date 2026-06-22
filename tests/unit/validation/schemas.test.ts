@@ -1,4 +1,4 @@
-import { cryptoPriceSchema, validateRequest } from '../../../src/validation/schemas';
+import { cryptoPriceSchema, validateRequest } from '../../../src/validation';
 import { ValidationError } from '../../../src/utils/errors';
 
 describe('validateRequest', () => {

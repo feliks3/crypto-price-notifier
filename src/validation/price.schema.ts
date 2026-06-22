@@ -6,6 +6,8 @@ export const cryptoPriceSchema = z.object({
   email: z.email('invalid email format')
 });
 
+export type CryptoPriceInput = z.infer<typeof cryptoPriceSchema>;
+
 export const validateRequest = <T>(schema: z.ZodSchema<T>, data: unknown): T => {
   const result = schema.safeParse(data);
   if (!result.success) {

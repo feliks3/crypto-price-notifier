@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { config } from '../config';
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -20,8 +21,7 @@ export type PriceHistoryItem = {
 };
 
 export async function savePriceHistory(input: SavePriceHistoryInput): Promise<PriceHistoryItem> {
-  const tableName = process.env.PRICE_HISTORY_TABLE;
-  if (!tableName) {
+  if (!config.dynamodb.tableName) {
     throw new Error('PRICE_HISTORY_TABLE is not configured');
   }
 
@@ -35,7 +35,7 @@ export async function savePriceHistory(input: SavePriceHistoryInput): Promise<Pr
 
   await docClient.send(
     new PutCommand({
-      TableName: tableName,
+      TableName: config.dynamodb.tableName,
       Item: item
     })
   );
@@ -44,14 +44,13 @@ export async function savePriceHistory(input: SavePriceHistoryInput): Promise<Pr
 }
 
 export async function getPriceHistory(): Promise<PriceHistoryItem[]> {
-  const tableName = process.env.PRICE_HISTORY_TABLE;
-  if (!tableName) {
+  if (!config.dynamodb.tableName) {
     throw new Error('PRICE_HISTORY_TABLE is not configured');
   }
 
   const result = await docClient.send(
     new ScanCommand({
-      TableName: tableName
+      TableName: config.dynamodb.tableName
     })
   );
 

@@ -2,8 +2,21 @@ import { sendPriceEmail } from '../../../src/services/email.service';
 
 const mockSend = jest.fn();
 
+jest.mock('../../../src/config', () => ({
+  get config() {
+    return {
+      ses: {
+        fromEmail: process.env.SES_FROM_EMAIL,
+        region: 'ap-southeast-2'
+      }
+    };
+  }
+}));
+
 jest.mock('@aws-sdk/client-ses', () => ({
-  SESClient: jest.fn().mockImplementation(() => ({ send: mockSend })),
+  SESClient: jest.fn().mockImplementation(() => ({
+    send: (...args: unknown[]) => mockSend(...args)
+  })),
   SendEmailCommand: jest.fn().mockImplementation((input) => input)
 }));
 

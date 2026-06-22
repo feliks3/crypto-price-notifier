@@ -1,3 +1,4 @@
+import { config } from '../config';
 import { CoinNotFoundError, ExternalAPIError } from '../utils/errors';
 
 export interface CoinPrice {
@@ -17,9 +18,9 @@ interface CoinGeckoSimplePriceResponse {
 export const getCoinPrice = async (coin: string): Promise<CoinPrice> => {
   const normalizedCoin = coin.trim().toLowerCase();
 
-  const url = new URL('https://api.coingecko.com/api/v3/simple/price');
+  const url = new URL(`${config.coingecko.baseUrl}/simple/price`);
   url.searchParams.set('ids', normalizedCoin);
-  url.searchParams.set('vs_currencies', 'usd');
+  url.searchParams.set('vs_currencies', config.coingecko.currency);
   url.searchParams.set('include_last_updated_at', 'true');
 
   let response: Response;
@@ -45,7 +46,7 @@ export const getCoinPrice = async (coin: string): Promise<CoinPrice> => {
 
   return {
     coin: normalizedCoin,
-    currency: 'usd',
+    currency: config.coingecko.currency,
     price,
     lastUpdatedAt: data[normalizedCoin]?.last_updated_at
   };

@@ -21,10 +21,6 @@ export type PriceHistoryItem = {
 };
 
 export async function savePriceHistory(input: SavePriceHistoryInput): Promise<PriceHistoryItem> {
-  if (!config.dynamodb.tableName) {
-    throw new Error('PRICE_HISTORY_TABLE is not configured');
-  }
-
   const item: PriceHistoryItem = {
     email: input.email,
     createdAt: new Date().toISOString(),
@@ -44,10 +40,6 @@ export async function savePriceHistory(input: SavePriceHistoryInput): Promise<Pr
 }
 
 export async function getPriceHistory(): Promise<PriceHistoryItem[]> {
-  if (!config.dynamodb.tableName) {
-    throw new Error('PRICE_HISTORY_TABLE is not configured');
-  }
-
   const result = await docClient.send(
     new ScanCommand({
       TableName: config.dynamodb.tableName

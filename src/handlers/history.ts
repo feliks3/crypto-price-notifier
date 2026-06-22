@@ -5,14 +5,12 @@ import { logger } from '../utils/logger';
 import { getPriceHistory } from '../repositories/price-history.repository';
 
 const searchHistoryHandler = async (
-  event: APIGatewayProxyEvent
+  _event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  logger.info('History request received', { query: event.queryStringParameters });
+  logger.info('History request received');
 
   const items = await getPriceHistory();
-
   logger.info('History fetched', { count: items.length });
-
   return successResponse({ items });
 };
 

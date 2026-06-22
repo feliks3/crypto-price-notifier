@@ -22,6 +22,7 @@ provider:
             - dynamodb:PutItem
             - dynamodb:Scan
             - dynamodb:Query
+            - dynamodb:GetItem
           Resource:
             - !GetAtt PriceHistoryTable.Arn
 
@@ -32,6 +33,7 @@ functions:
       - http:
           path: health
           method: get
+          cors: true
 
   price:
     handler: dist/src/handlers/price.handler
@@ -39,6 +41,7 @@ functions:
       - http:
           path: price
           method: post
+          cors: true
 
   history:
     handler: dist/src/handlers/history.handler

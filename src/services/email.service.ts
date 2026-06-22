@@ -16,10 +16,6 @@ export const sendPriceEmail = async ({
   currency,
   price
 }: SendPriceEmailParams): Promise<void> => {
-  if (!config.ses.fromEmail) {
-    throw new Error('SES_FROM_EMAIL environment variable is not configured');
-  }
-
   const command = new SendEmailCommand({
     Source: config.ses.fromEmail,
     Destination: {

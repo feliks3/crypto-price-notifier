@@ -3,13 +3,11 @@ import {
   getPriceHistory
 } from '../../../src/repositories/price-history.repository';
 
-const mockTableName = { value: 'test-table' };
-
 jest.mock('../../../src/config', () => ({
   get config() {
     return {
       dynamodb: {
-        tableName: mockTableName.value
+        tableName: 'test-table'
       }
     };
   }
@@ -37,7 +35,6 @@ describe('price-history repository', () => {
   beforeEach(() => {
     mockSend = (global as any).__mockDynamoSend;
     mockSend.mockReset();
-    mockTableName.value = 'test-table';
   });
 
   describe('savePriceHistory', () => {
@@ -56,19 +53,6 @@ describe('price-history repository', () => {
       expect(result.price).toBe(67432.21);
       expect(result.createdAt).toBeDefined();
       expect(mockSend).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw when PRICE_HISTORY_TABLE is not set', async () => {
-      mockTableName.value = undefined as unknown as string;
-
-      await expect(
-        savePriceHistory({
-          email: 'test@example.com',
-          coin: 'bitcoin',
-          price: 67432.21,
-          currency: 'usd'
-        })
-      ).rejects.toThrow('PRICE_HISTORY_TABLE is not configured');
     });
   });
 
@@ -96,12 +80,6 @@ describe('price-history repository', () => {
 
       const result = await getPriceHistory();
       expect(result).toEqual([]);
-    });
-
-    it('should throw when PRICE_HISTORY_TABLE is not set', async () => {
-      mockTableName.value = undefined as unknown as string;
-
-      await expect(getPriceHistory()).rejects.toThrow('PRICE_HISTORY_TABLE is not configured');
     });
   });
 });

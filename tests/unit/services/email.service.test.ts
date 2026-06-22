@@ -21,15 +21,8 @@ jest.mock('@aws-sdk/client-ses', () => ({
 }));
 
 describe('sendPriceEmail', () => {
-  const originalEnv = process.env;
-
   beforeEach(() => {
     mockSend.mockReset();
-    process.env = { ...originalEnv, SES_FROM_EMAIL: 'from@example.com' };
-  });
-
-  afterEach(() => {
-    process.env = originalEnv;
   });
 
   it('should call SES with correct parameters', async () => {
@@ -43,19 +36,6 @@ describe('sendPriceEmail', () => {
     });
 
     expect(mockSend).toHaveBeenCalledTimes(1);
-  });
-
-  it('should throw error when SES_FROM_EMAIL is not set', async () => {
-    delete process.env.SES_FROM_EMAIL;
-
-    await expect(
-      sendPriceEmail({
-        toEmail: 'to@example.com',
-        coin: 'bitcoin',
-        currency: 'usd',
-        price: 67432.21
-      })
-    ).rejects.toThrow('SES_FROM_EMAIL environment variable is not configured');
   });
 
   it('should throw error when SES send fails', async () => {

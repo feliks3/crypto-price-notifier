@@ -85,6 +85,7 @@ POST /price
     "price": 67432.21,
     "email": "user@example.com",
     "emailSent": true,
+    "historySaved": true,
     "lastUpdatedAt": 1234567890
   }
 }
@@ -190,3 +191,19 @@ Two GitHub Actions workflows:
 | AWS_SECRET_ACCESS_KEY | IAM user secret key         |
 | AWS_REGION            | AWS region (ap-southeast-2) |
 | SES_FROM_EMAIL        | Verified sender email       |
+
+## Testing the API
+
+### Query Crypto Price and Send Email
+
+```bash
+curl -X POST https://xaeexa8kjd.execute-api.ap-southeast-2.amazonaws.com/dev/price \
+  -H "Content-Type: application/json" \
+  -d '{"coin":"bitcoin","email":"felikslyu@gmail.com"}'
+```
+
+### Get Search History
+
+```bash
+curl https://xaeexa8kjd.execute-api.ap-southeast-2.amazonaws.com/dev/history
+```

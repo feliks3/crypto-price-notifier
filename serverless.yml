@@ -27,21 +27,21 @@ provider:
 
 functions:
   health:
-    handler: src/handlers/health.handler
+    handler: dist/src/handlers/health.handler
     events:
       - http:
           path: health
           method: get
 
   price:
-    handler: src/handlers/price.handler
+    handler: dist/src/handlers/price.handler
     events:
       - http:
           path: price
           method: post
 
   history:
-    handler: src/handlers/history.handler
+    handler: dist/src/handlers/history.handler
     events:
       - http:
           path: history

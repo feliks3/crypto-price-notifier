@@ -1,5 +1,6 @@
 import { getCoinPrice } from '../services/coingecko.service';
 import { sendPriceEmail } from '../services/email.service';
+import { savePriceHistory } from '../repositories/price-history.repository';
 
 interface PriceRequestBody {
   coin?: string;
@@ -47,12 +48,20 @@ export const handler = async (event: { body?: string | null }) => {
       price: result.price
     });
 
+    const history = await savePriceHistory({
+      coin: result.coin,
+      price: result.price,
+      currency: result.currency,
+      email: body.email
+    });
+
     return jsonResponse(200, {
       coin: result.coin,
       currency: result.currency,
       price: result.price,
       email: body.email,
       emailSent: true,
+      historyId: history.id,
       lastUpdatedAt: result.lastUpdatedAt
     });
   } catch (error) {

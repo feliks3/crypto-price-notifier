@@ -9,6 +9,7 @@ provider:
   stage: dev
   environment:
     SES_FROM_EMAIL: felikslyu@gmail.com
+    PRICE_HISTORY_TABLE: ${self:service}-${sls:stage}-price-history
   iam:
     role:
       statements:
@@ -16,6 +17,12 @@ provider:
           Action:
             - ses:SendEmail
           Resource: '*'
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:Scan
+          Resource:
+            - !GetAtt PriceHistoryTable.Arn
 
 functions:
   health:
@@ -34,3 +41,17 @@ functions:
 
 plugins:
   - serverless-offline
+
+resources:
+  Resources:
+    PriceHistoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${sls:stage}-price-history
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH

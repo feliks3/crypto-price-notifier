@@ -1,0 +1,20 @@
+service: crypto-price-notifier
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: ap-southeast-2
+  stage: dev
+
+functions:
+  health:
+    handler: src/handlers/health.handler
+    events:
+      - http:
+          path: health
+          method: get
+
+plugins:
+  - serverless-offline

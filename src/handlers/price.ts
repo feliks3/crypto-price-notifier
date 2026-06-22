@@ -1,4 +1,5 @@
 import { getCoinPrice } from '../services/coingecko.service';
+import { sendPriceEmail } from '../services/email.service';
 
 interface PriceRequestBody {
   coin?: string;
@@ -39,11 +40,19 @@ export const handler = async (event: { body?: string | null }) => {
 
     const result = await getCoinPrice(body.coin);
 
+    await sendPriceEmail({
+      toEmail: body.email,
+      coin: result.coin,
+      currency: result.currency,
+      price: result.price
+    });
+
     return jsonResponse(200, {
       coin: result.coin,
       currency: result.currency,
       price: result.price,
       email: body.email,
+      emailSent: true,
       lastUpdatedAt: result.lastUpdatedAt
     });
   } catch (error) {

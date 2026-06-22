@@ -16,5 +16,12 @@ functions:
           path: health
           method: get
 
+  price:
+    handler: src/handlers/price.handler
+    events:
+      - http:
+          path: price
+          method: post
+
 plugins:
   - serverless-offline

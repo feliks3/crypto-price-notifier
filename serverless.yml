@@ -39,6 +39,14 @@ functions:
           path: price
           method: post
 
+  history:
+    handler: src/handlers/history.handler
+    events:
+      - http:
+          path: history
+          method: get
+          cors: true
+
 plugins:
   - serverless-offline
 

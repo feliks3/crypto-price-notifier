@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { randomUUID } from 'crypto';
 
 const client = new DynamoDBClient({});
@@ -25,15 +26,29 @@ export async function savePriceHistory(input: SavePriceHistoryInput) {
     price: input.price,
     currency: input.currency,
     email: input.email,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date().toISOString()
   };
 
   await docClient.send(
     new PutCommand({
       TableName: tableName,
-      Item: item,
-    }),
+      Item: item
+    })
   );
 
   return item;
+}
+
+export async function getPriceHistory() {
+  if (!tableName) {
+    throw new Error('PRICE_HISTORY_TABLE is not configured');
+  }
+
+  const result = await docClient.send(
+    new ScanCommand({
+      TableName: tableName
+    })
+  );
+
+  return result.Items ?? [];
 }

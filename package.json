@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/feliks3/crypto-price-notifier#readme",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.162",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.0.0",
     "@typescript-eslint/eslint-plugin": "^8.61.1",

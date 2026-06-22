@@ -42,6 +42,6 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to dev
-        run: npx serverless deploy --stage dev
+        run: npx serverless@3 deploy --stage dev
         env:
           SES_FROM_EMAIL: ${{ secrets.SES_FROM_EMAIL }}

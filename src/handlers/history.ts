@@ -1,24 +1,19 @@
-import type { APIGatewayProxyHandler } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { withErrorHandler } from '../utils/errorHandler';
+import { successResponse } from '../utils/response';
+import { logger } from '../utils/logger';
 import { getPriceHistory } from '../repositories/price-history.repository';
 
-export const handler: APIGatewayProxyHandler = async () => {
-  try {
-    const items = await getPriceHistory();
+const searchHistoryHandler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  logger.info('History request received', { query: event.queryStringParameters });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        items
-      })
-    };
-  } catch (error) {
-    console.error('Failed to get price history', error);
+  const items = await getPriceHistory();
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: 'Failed to get price history'
-      })
-    };
-  }
+  logger.info('History fetched', { count: items.length });
+
+  return successResponse({ items });
 };
+
+export const handler = withErrorHandler(searchHistoryHandler);

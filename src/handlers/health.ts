@@ -1,11 +1,5 @@
+import { successResponse } from '../utils/response';
+
 export const handler = async () => {
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      status: 'ok'
-    })
-  };
+  return successResponse({ status: 'ok', service: 'crypto-price-notifier' });
 };

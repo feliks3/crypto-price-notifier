@@ -1,3 +1,5 @@
+import { CoinNotFoundError, ExternalAPIError } from '../utils/errors';
+
 export interface CoinPrice {
   coin: string;
   currency: string;
@@ -20,18 +22,25 @@ export const getCoinPrice = async (coin: string): Promise<CoinPrice> => {
   url.searchParams.set('vs_currencies', 'usd');
   url.searchParams.set('include_last_updated_at', 'true');
 
-  const response = await fetch(url);
+  let response: Response;
+
+  try {
+    response = await fetch(url);
+  } catch (err) {
+    throw new ExternalAPIError(
+      `CoinGecko request failed: ${err instanceof Error ? err.message : 'network error'}`
+    );
+  }
 
   if (!response.ok) {
-    throw new Error(`CoinGecko request failed with status ${response.status}`);
+    throw new ExternalAPIError(`CoinGecko request failed with status ${response.status}`);
   }
 
   const data = (await response.json()) as CoinGeckoSimplePriceResponse;
-
   const price = data[normalizedCoin]?.usd;
 
   if (typeof price !== 'number') {
-    throw new Error(`Price not found for coin: ${normalizedCoin}`);
+    throw new CoinNotFoundError(normalizedCoin);
   }
 
   return {
